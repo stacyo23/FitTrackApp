@@ -16,7 +16,7 @@ app.use(express.static("public"));
 
 
 //creates connection to mongodb
-mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", 
+mongoose.connect("mongodb+srv://stacyo23:M@rcel1n3@cluster0.8unlr.mongodb.net/workout?retryWrites=true&w=majority", 
 { 
     useNewUrlParser: true,
     useUnifiedTopology: true,
