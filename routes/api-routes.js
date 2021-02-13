@@ -1,58 +1,58 @@
-var Workout = require("../models/workout"); 
+const db = require("../models"); 
 
 module.exports =function(app) {
 
 app.get("/api/workouts", (req, res) => {
-        Workout.find()
-        .then(workout => {
-            res.status(200).json(workout); 
-            })
-            .catch((err) => {
-                res.status(400).json(err); 
+        db.Workout.aggregate([
+           {
+            $addFields: {
+                totalDuration: { $sum: "$exercises.duration" }
+            }
+        }
+        ]).then(workout => {
+            res.json(workout)
+        }).catch(err => {
+            res.json(err);
         })
 })
 
 app.post("/api/workouts", (req, res) => {
-    Workout.create({})
+    db.Workout.create(req.body)
     .then(workout => {
-        res.status(200).json(workout); 
+        res.json(workout); 
     })
     .catch((err) => {
-        res.status(400).json(err);
+        res.json(err);
     })
 })
 
-app.put("/api/workouts/:id", ({body, params}, res) => {
-        Workout.findByIdAndUpdate(  
-            params.id,
-            {$push:{exercises:body} },
-            {new: true,runValidators:true }
+app.put("/api/workouts/:id", (req, res) => {
+        db.Workout.findByIdAndUpdate( 
+            req.params.id,
+            {
+            $push: { exercises: req.body } },
         )
         .then(workout => {
-            res.status(200).json(workout); 
+            res.json(workout); 
         })
         .catch((err) => {
-            res.status(400).json(err);  
+            res.json(err);  
         })
 })
 
 app.get("/api/workouts/range", (req, res) => {
-    Workout.find()
+    db.Workout.aggregate([ 
+        {
+        $addFields: {
+            totalDuration: { $sum: "$exercises.duration" }
+        }
+    }
+    ]).sort({ _id: -1 })
+    .limit(7)
     .then(workout => {
-        res.status(200).json(workout); 
-        })
-        .catch((err) => {
-            res.status(400).json(err); 
-    })
-})
-
-app.post("/api/workouts/range", (req, res) => {
-    Workout.create({})
-    .then(workout => {
-        res.status(200).json(workout); 
-        })
-        .catch((err) => {
-            res.status(400).json(err); 
+        res.json(workout)
+    }).catch(err => {
+        res.json(err);
     })
 })
 
