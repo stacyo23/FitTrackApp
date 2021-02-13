@@ -1,5 +1,7 @@
 let mongoose = require("mongoose");
 let db = require("../models");
+require('dotenv').config()
+
 
 mongoose.connect("mongodb+srv://stacyo23:M@rcel1n3@cluster0.8unlr.mongodb.net/workout?retryWrites=true&w=majority", {
   useNewUrlParser: true,
